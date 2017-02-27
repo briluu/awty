@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText messageET;
     private EditText numberET;
     private EditText intervalET;
-    private Button button;
     AlarmManager manager;
     PendingIntent pIntent;
     private static String message;
@@ -35,11 +33,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Wire up buttons
-        Button start = (Button) findViewById(R.id.start);
+        final Button start = (Button) findViewById(R.id.start);
         messageET = (EditText) findViewById(R.id.message);
         numberET = (EditText) findViewById(R.id.phone_number);
         intervalET = (EditText) findViewById(R.id.interval);
-        button = (Button) findViewById(R.id.start);
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,9 +45,9 @@ public class MainActivity extends AppCompatActivity {
                     if (isFormValid()) {
                         manager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
                         Intent intent = new Intent(MainActivity.this, MessageReceiver.class);
-                        String fullMessage = number + ": " + message;
-                        intent.putExtra(INTENT_MESSAGE, fullMessage);
+                        intent.putExtra(INTENT_MESSAGE, message);
                         intent.putExtra(INTENT_NUMBER, number);
+                        intent.putExtra(INTENT_INTERVAL, interval);
 
                         pIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
 
@@ -60,11 +57,12 @@ public class MainActivity extends AppCompatActivity {
                                 1000 * 60 * interval,
                                 pIntent);
                         started = true;
-                        button.setText(R.string.stop);
+                        start.setText(R.string.stop);
+                        Toast.makeText(getApplicationContext(), "Messages started!", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     stop();
-                    button.setText(R.string.start);
+                    start.setText(R.string.start);
                     Toast.makeText(getApplicationContext(), "Messages stopped!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -92,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
             numberET.setError("Need a phone number of at least 1 digit!");
             return false;
         }
-        Log.i("MainActivity", "Message is: \"" + number + ": " + message + "\"");
         return true;
     }
 

@@ -3,6 +3,7 @@ package edu.washington.briluu.arewethereyet;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,9 +24,13 @@ public class MessageReceiver extends BroadcastReceiver {
         Log.i("MessageReceiver", "onReceive for MessageReceiver called.");
 
         String message = intent.getStringExtra(INTENT_MESSAGE);
+        String number = intent.getStringExtra(INTENT_NUMBER);
 
         Log.i("MessageReceiver", "Message is: " + message);
 
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(number, null, message, null, null);
+
+        //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }
